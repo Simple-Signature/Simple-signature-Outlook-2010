@@ -30,7 +30,7 @@ namespace Simple_Signature
             oOutlook.OptionsPagesAdd += new Outlook.ApplicationEvents_11_OptionsPagesAddEventHandler(Application_OptionsPagesAdd);
             if (Properties.Settings.Default.URLSimpleSign == "")
             {
-                Properties.Settings.Default.URLSimpleSign ="http://simplesignature.meteor.com/API/";
+                Properties.Settings.Default.URLSimpleSign ="http://simplesignature.meteor.com/";
                 if (System.Configuration.ConfigurationSettings.AppSettings!=null && System.Configuration.ConfigurationSettings.AppSettings["firm"] != null || System.Configuration.ConfigurationSettings.AppSettings["firm"] != "")
                 {
                     Properties.Settings.Default.Firm = System.Configuration.ConfigurationSettings.AppSettings["firm"];
@@ -71,7 +71,7 @@ namespace Simple_Signature
 
         void updateCampaigns()
         {
-            string response = GET(Properties.Settings.Default.URLSimpleSign + Properties.Settings.Default.Firm + "/" + Properties.Settings.Default.Service);
+            string response = GET(Properties.Settings.Default.URLSimpleSign +"API/"+ Properties.Settings.Default.Firm + "/" + Properties.Settings.Default.Service);
             if(response !="erreur") {
                 response = response.Replace("PATHAPPDATA", path);
                 response = response.Replace("VARIABLE_NAME", Properties.Settings.Default.FirstName + " " + Properties.Settings.Default.LastName);
