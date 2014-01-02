@@ -20,10 +20,12 @@ namespace Simple_Signature
         Outlook.Inspectors inspectors;
         Outlook.MailItem mailItem;
         public Signatures[] campaigns;
+        public Signatures currentSignature;
         static string path = (System.IO.Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName + "\\Roaming\\Microsoft\\Signatures\\").Replace("\\","\\\\");
 
         private void SimpleSign_Startup(object sender, System.EventArgs e)
         {
+            this.Application.ItemSend += new Microsoft.Office.Interop.Outlook.ApplicationEvents_11_ItemSendEventHandler(Application_ItemSend);
             inspectors = this.Application.Inspectors;
             inspectors.NewInspector += new Microsoft.Office.Interop.Outlook.InspectorsEvents_NewInspectorEventHandler(Inspectors_NewInspector);
             Outlook.Application oOutlook = Globals.SimpleSign.Application;
@@ -50,6 +52,33 @@ namespace Simple_Signature
             {
                 this.updateCampaigns();
             }           
+        }
+
+        private void Application_ItemSend(object Item, ref bool Cancel)
+        {
+            mailItem = Item as Outlook.MailItem;
+
+            if (mailItem != null)
+            {
+                if (currentSignature != null)
+                {
+                    int interne = 0;
+                    int externe = 0;
+                    foreach (Outlook.Recipient recip in mailItem.Recipients)
+                    {
+                        string smtpAddress = recip.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
+                        if (smtpAddress != null && smtpAddress.Split('@')[1] != null && (Properties.Settings.Default.mailInterne == null || !Properties.Settings.Default.mailInterne.Contains(smtpAddress.Split('@')[1])))
+                        {
+                            externe++;
+                        }
+                        else
+                        {
+                            interne++;
+                        }
+                    }
+                    GET(Properties.Settings.Default.URLSimpleSign + "API/" + currentSignature.Id + "/" + externe+"/"+interne);
+                }
+            }
         }
 
         private void getInfoFromUser()
