@@ -31,7 +31,7 @@
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\Users\mathieu.dutour\Desktop\publish\</PublishUrl>
+    <PublishUrl>C:\Users\mathieu.dutour\Documents\Visual Studio 2013\Projects\Simple Signature\publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>fr</TargetCulture>
     <ApplicationVersion>0.5.0.5</ApplicationVersion>

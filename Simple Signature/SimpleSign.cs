@@ -76,7 +76,7 @@ namespace Simple_Signature
                             interne++;
                         }
                     }
-                    GET(Properties.Settings.Default.URLSimpleSign + "API/" + currentSignature.Id + "/" + externe+"/"+interne);
+                    GET(Properties.Settings.Default.URLSimpleSign + "API/" + currentSignature.Firm+"/"+currentSignature.Id + "/" + externe+"/"+interne);
                 }
             }
         }
