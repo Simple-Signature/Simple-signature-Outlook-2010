@@ -11,6 +11,16 @@ namespace Simple_Signature
 {
     public partial class ConnexionErrorForm : Form
     {
+        public ConnexionErrorForm(String s)
+        {
+            InitializeComponent();
+            if (s == "noAccount")
+            {
+                this.label2.Text = "Il semble que vous n'avez pas créé";
+                this.label3.Text = "de compte Simple Signature";
+            }       
+        }
+
         public ConnexionErrorForm()
         {
             InitializeComponent();

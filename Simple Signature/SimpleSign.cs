@@ -30,6 +30,7 @@ namespace Simple_Signature
             inspectors.NewInspector += new Microsoft.Office.Interop.Outlook.InspectorsEvents_NewInspectorEventHandler(Inspectors_NewInspector);
             Outlook.Application oOutlook = Globals.SimpleSign.Application;
             oOutlook.OptionsPagesAdd += new Outlook.ApplicationEvents_11_OptionsPagesAddEventHandler(Application_OptionsPagesAdd);
+            Globals.Ribbons.RibbonExplorer.parent = this;
             if (Properties.Settings.Default.URLSimpleSign == "")
             {
                 Properties.Settings.Default.URLSimpleSign ="http://simplesignature.meteor.com/";
@@ -46,7 +47,7 @@ namespace Simple_Signature
             }
             if (Properties.Settings.Default.Firm == "")
             {
-                new WelcomeForm().Show();
+                new WelcomeForm(this).Show();
             }
             else
             {
@@ -98,7 +99,7 @@ namespace Simple_Signature
         }
 
 
-        void updateCampaigns()
+        public void updateCampaigns()
         {
             string response = GET(Properties.Settings.Default.URLSimpleSign +"API/"+ Properties.Settings.Default.Firm + "/" + Properties.Settings.Default.Service);
             if(response !="erreur") {
@@ -125,7 +126,7 @@ namespace Simple_Signature
                         string file = item.Split(new string[] { "\"" }, StringSplitOptions.None)[0];
                         if(!File.Exists(file))
                         {
-                            webClient.DownloadFile(Properties.Settings.Default.URLSimpleSign + "img/" + file.Split(new string[] { path }, StringSplitOptions.None)[1], file);
+                            webClient.DownloadFile(Properties.Settings.Default.URLSimpleSign + "cfs/files/images/" + file.Split(new string[] { path }, StringSplitOptions.None)[1], file);
                         }
                     }
                 }
@@ -135,7 +136,7 @@ namespace Simple_Signature
 
         void Application_OptionsPagesAdd(Outlook.PropertyPages Pages)
         {
-            Pages.Add(new OptionsForm());
+            Pages.Add(new OptionsForm(this));
         }
 
         void Inspectors_NewInspector(Microsoft.Office.Interop.Outlook.Inspector Inspector)
@@ -230,6 +231,7 @@ namespace Simple_Signature
 
         string GET(string url) 
         {
+            Console.Write(url);
             try {
                 using (WebClient client = new WebClient())
                 {
@@ -238,8 +240,10 @@ namespace Simple_Signature
                 }
             }
             catch (Exception ex) {
-                Console.Write(ex);
-                new ConnexionErrorForm().Show();
+                if(ex.Message=="Le serveur distant a retourné une erreur : (400) Demande incorrecte.")
+                    new ConnexionErrorForm("noAccount").Show();
+                else
+                    new ConnexionErrorForm().Show();
                 return "erreur";
             }
         }

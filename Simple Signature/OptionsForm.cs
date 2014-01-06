@@ -11,8 +11,10 @@ namespace Simple_Signature
 {
     public partial class OptionsForm : Form
     {
-        public OptionsForm()
+        SimpleSign parent = null;
+        public OptionsForm(SimpleSign s)
         {
+            parent = s;
             InitializeComponent();
             this.BackColor = Color.FromArgb(142, 68, 173);
         }
@@ -34,6 +36,7 @@ namespace Simple_Signature
             Properties.Settings.Default.Phone = this.phoneTextBox.Text;
             Properties.Settings.Default.Job = this.jobTextBox.Text;
             Properties.Settings.Default.Save();
+            parent.updateCampaigns();
             this.Close();
         }
 

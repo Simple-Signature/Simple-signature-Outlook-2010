@@ -11,8 +11,10 @@ namespace Simple_Signature
 {
     public partial class AdvancedOptionsForm : Form
     {
-        public AdvancedOptionsForm()
+        SimpleSign parent = null;
+        public AdvancedOptionsForm(SimpleSign s)
         {
+            parent = s;
             InitializeComponent();
             this.BackColor = Color.FromArgb(142, 68, 173);
         }
@@ -43,6 +45,7 @@ namespace Simple_Signature
             }
             Properties.Settings.Default.mailInterne.AddRange(this.mailTextBox.Lines);
             Properties.Settings.Default.Save();
+            parent.updateCampaigns();
             this.Close();
         }
 

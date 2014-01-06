@@ -11,8 +11,10 @@ namespace Simple_Signature
 {
     public partial class WelcomeForm : Form
     {
-        public WelcomeForm()
+        SimpleSign parent = null;
+        public WelcomeForm(SimpleSign s)
         {
+            parent = s;
             InitializeComponent();
             this.BackColor = Color.FromArgb(142, 68, 173);
         }
@@ -33,11 +35,12 @@ namespace Simple_Signature
             Properties.Settings.Default.Save();
             if (Properties.Settings.Default.LastName == "" || Properties.Settings.Default.FirstName=="" || Properties.Settings.Default.Email=="" || Properties.Settings.Default.Phone=="" || Properties.Settings.Default.Job=="")
             {
-                new OptionsForm().Show();
+                new OptionsForm(parent).Show();
                 this.Close();
             }
             else
             {
+                parent.updateCampaigns();
                 this.Close();
             }           
         }
