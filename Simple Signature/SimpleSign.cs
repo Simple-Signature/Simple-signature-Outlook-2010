@@ -119,14 +119,15 @@ namespace Simple_Signature
                     Globals.Ribbons.RibbonExplorer.SignatureGallery.Items.Add(item);
 	            }
                 WebClient webClient = new WebClient();
-                foreach (var item in response.Split(new string[] { "<img scr=\"" }, StringSplitOptions.None))
+                foreach (var item in response.Split(new string[] { "<img alt=\\\"\\\" src=\\\"" }, StringSplitOptions.None))
                 {
                     if (item.StartsWith(path))
                     {
                         string file = item.Split(new string[] { "\"" }, StringSplitOptions.None)[0];
                         if(!File.Exists(file))
                         {
-                            webClient.DownloadFile(Properties.Settings.Default.URLSimpleSign + "cfs/files/images/" + file.Split(new string[] { path }, StringSplitOptions.None)[1], file);
+                            string url = Properties.Settings.Default.URLSimpleSign + "cfs/files/images/" + file.Split(new string[] { path }, StringSplitOptions.None)[1].Split(new string[] { "\\" }, StringSplitOptions.None)[0];
+                            webClient.DownloadFile(url, url.Replace(Properties.Settings.Default.URLSimpleSign + "cfs/files/images/",path));
                         }
                     }
                 }
@@ -149,7 +150,7 @@ namespace Simple_Signature
                 {
                     if (mailItem.EntryID == null)
                     {
-                        mailItem.HTMLBody = "<br/><br/>" + Signatures.getDefaultInterne(campaigns).Value;
+                        mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value+"</div>";
                         mailItem.PropertyChange += RecipientsPropertyChange;
                     }
                     else
@@ -166,11 +167,11 @@ namespace Simple_Signature
                         }
                         if (interne)
                         {
-                            mailItem.HTMLBody = "<br/><br/>" + Signatures.getDefaultInterne(campaigns).Value + mailItem.HTMLBody;
+                            mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>" + mailItem.HTMLBody;
                         }
                         else
                         {
-                            mailItem.HTMLBody = "<br/><br/>" + Signatures.getDefaultExterne(campaigns).Value + mailItem.HTMLBody;
+                            mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultExterne(campaigns).Value + "</div>" + mailItem.HTMLBody;
                         }
                         mailItem.PropertyChange += RecipientsPropertyChange;
                     }
@@ -195,14 +196,14 @@ namespace Simple_Signature
                     }
                 }
                 string body = mailItem.HTMLBody;
-                System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("((\\<div\\ id\\ =\\ \"signature\"\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>))");
+                System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("(\\<div\\ id='signature'\\>).{0,}?(\\</div\\>)");
                 if (interne)
-                {                    
-                    body = myRegex.Replace(body, Signatures.getDefaultInterne(campaigns).Value,1);
+                {
+                    body = myRegex.Replace(body.Replace("\\\r\\\n", ""), "<div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>", 1);
                 }
                 else
-                {                   
-                   body = myRegex.Replace(body, Signatures.getDefaultExterne(campaigns).Value, 1);
+                {
+                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getDefaultExterne(campaigns).Value + "</div>", 1);
                 }
                 mailItem.HTMLBody = body;
             }
@@ -217,7 +218,7 @@ namespace Simple_Signature
             // Convert Base64 String to byte[]
             if(base64String != null)
             {
-                byte[] imageBytes = Convert.FromBase64String(base64String);
+                byte[] imageBytes = Convert.FromBase64String(base64String.Replace("data:image/png;base64,",""));
                 MemoryStream ms = new MemoryStream(imageBytes, 0,
                   imageBytes.Length);
 
