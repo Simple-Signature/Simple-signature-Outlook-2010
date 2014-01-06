@@ -83,6 +83,7 @@
             // SignatureGallery
             // 
             this.SignatureGallery.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.SignatureGallery.Image = ((System.Drawing.Image)(resources.GetObject("SignatureGallery.Image")));
             this.SignatureGallery.Label = "Signatures";
             this.SignatureGallery.Name = "SignatureGallery";
             this.SignatureGallery.ShowImage = true;

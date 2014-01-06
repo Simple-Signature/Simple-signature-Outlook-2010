@@ -199,7 +199,7 @@ namespace Simple_Signature
                 System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("(\\<div\\ id='signature'\\>).{0,}?(\\</div\\>)");
                 if (interne)
                 {
-                    body = myRegex.Replace(body.Replace("\\\r\\\n", ""), "<div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>", 1);
+                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>", 1);
                 }
                 else
                 {
