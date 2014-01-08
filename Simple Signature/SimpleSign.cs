@@ -77,7 +77,7 @@ namespace Simple_Signature
                             interne++;
                         }
                     }
-                    GET(Properties.Settings.Default.URLSimpleSign + "API/" + currentSignature.Firm+"/"+currentSignature.Id + "/" + externe+"/"+interne);
+                    GET(Properties.Settings.Default.URLSimpleSign + "API/stats/" + currentSignature.Firm+"/"+currentSignature.Id + "/" + externe+"/"+interne);
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace Simple_Signature
 
         public void updateCampaigns()
         {
-            string response = GET(Properties.Settings.Default.URLSimpleSign +"API/"+ Properties.Settings.Default.Firm + "/" + Properties.Settings.Default.Service);
+            string response = GET(Properties.Settings.Default.URLSimpleSign +"API/signs/"+ Properties.Settings.Default.Firm + "/" + Properties.Settings.Default.Service);
             if(response !="erreur") {
                 response = response.Replace("PATHAPPDATA", path);
                 response = response.Replace("VARIABLE_NAME", Properties.Settings.Default.FirstName + " " + Properties.Settings.Default.LastName);
@@ -140,6 +140,29 @@ namespace Simple_Signature
             Pages.Add(new OptionsForm(this));
         }
 
+        private void mailItem_Open(ref bool Cancel)
+        {
+            Boolean interne = true;
+            foreach (Outlook.Recipient recip in mailItem.Recipients)
+            {
+                string smtpAddress = recip.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
+                if (smtpAddress != null && smtpAddress.Split('@')[1] != null && (Properties.Settings.Default.mailInterne == null || !Properties.Settings.Default.mailInterne.Contains(smtpAddress.Split('@')[1])))
+                {
+                    interne = false;
+                    break;
+                }
+            }
+            if (interne)
+            {
+                mailItem.HTMLBody = mailItem.HTMLBody.Replace("<div class=WordSection1>", "<div class=WordSection1><br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns, this).Value + "</div>");
+            }
+            else
+            {
+                mailItem.HTMLBody = mailItem.HTMLBody.Replace("<div class=WordSection1>", "<div class=WordSection1><br/><br/><div id='signature'>" + Signatures.getFirstExterne(campaigns, this).Value + "</div>");
+            }
+            mailItem.Open -= mailItem_Open;
+        }
+
         void Inspectors_NewInspector(Microsoft.Office.Interop.Outlook.Inspector Inspector)
         {           
             mailItem = Inspector.CurrentItem as Outlook.MailItem;
@@ -150,28 +173,13 @@ namespace Simple_Signature
                 {
                     if (mailItem.EntryID == null)
                     {
-                        mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value+"</div>";
-                        mailItem.PropertyChange += RecipientsPropertyChange;
-                    }
-                    else
-                    {
-                        Boolean interne = true;
-                        foreach (Outlook.Recipient recip in mailItem.Recipients)
+                        if (mailItem.HTMLBody != "" && mailItem.HTMLBody.Contains("<div class=WordSection1>"))
                         {
-                            string smtpAddress = recip.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
-                            if (smtpAddress != null && smtpAddress.Split('@')[1] != null && (Properties.Settings.Default.mailInterne==null || !Properties.Settings.Default.mailInterne.Contains(smtpAddress.Split('@')[1])))
-                            {
-                                interne = false;
-                                break;
-                            }
-                        }
-                        if (interne)
-                        {
-                            mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>" + mailItem.HTMLBody;
+                            mailItem.Open += new Outlook.ItemEvents_10_OpenEventHandler(mailItem_Open);
                         }
                         else
                         {
-                            mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultExterne(campaigns).Value + "</div>" + mailItem.HTMLBody;
+                            mailItem.HTMLBody = "<br/><br/><div id='signature'>" + Signatures.getDefaultInterne(campaigns, this).Value + "</div>" + mailItem.HTMLBody;
                         }
                         mailItem.PropertyChange += RecipientsPropertyChange;
                     }
@@ -196,14 +204,14 @@ namespace Simple_Signature
                     }
                 }
                 string body = mailItem.HTMLBody;
-                System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("(\\<div\\ id='signature'\\>).{0,}?(\\</div\\>)");
+                System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("(\\<div\\ id='signature'\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>)");
                 if (interne)
                 {
-                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getDefaultInterne(campaigns).Value + "</div>", 1);
+                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getDefaultInterne(campaigns, this).Value + "</div>", 1);
                 }
                 else
                 {
-                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getDefaultExterne(campaigns).Value + "</div>", 1);
+                    body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getFirstExterne(campaigns, this).Value + "</div>", 1);
                 }
                 mailItem.HTMLBody = body;
             }

@@ -30,28 +30,43 @@ namespace Simple_Signature
         [JsonProperty("img")]
         public string Image { get; set; }
 
-        static public Signatures getDefaultInterne(Signatures[] campaigns)
+        static public Signatures getDefaultInterne(Signatures[] campaigns, SimpleSign s)
         {
             foreach (var item in campaigns)
             {
                 if(item.Name == "interne default")
                 {
+                    s.currentSignature = item;
                     return item;
                 }
             }
             return null;
         }
 
-        static public Signatures getDefaultExterne(Signatures[] campaigns)
+        static public Signatures getDefaultExterne(Signatures[] campaigns, SimpleSign s)
         {
             foreach (var item in campaigns)
             {
                 if (item.Name == "externe default")
                 {
+                    s.currentSignature = item;
                     return item;
                 }
             }
-            return null;
+            return getDefaultInterne(campaigns, s);
+        }
+
+        static public Signatures getFirstExterne(Signatures[] campaigns, SimpleSign s)
+        {
+            foreach (var item in campaigns)
+            {
+                if (item.Name != "externe default" && item.Name != "interne default")
+                {
+                    s.currentSignature = item;
+                    return item;
+                }
+            }
+            return getDefaultExterne(campaigns, s);
         }
     }
 
