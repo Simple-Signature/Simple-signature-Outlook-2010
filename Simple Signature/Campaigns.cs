@@ -68,6 +68,19 @@ namespace Simple_Signature
             }
             return getDefaultExterne(campaigns, s);
         }
+
+        static public Signatures getSignature(Signatures[] campaigns, SimpleSign s, string sign)
+        {
+            foreach (var item in campaigns)
+            {
+                if (item.Name == sign)
+                {
+                    s.currentSignature = item;
+                    return item;
+                }
+            }
+            return getFirstExterne(campaigns, s);
+        }
     }
 
 }

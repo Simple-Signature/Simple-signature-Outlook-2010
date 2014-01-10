@@ -24,6 +24,5 @@ namespace Simple_Signature
         {
             new AdvancedOptionsForm(parent).Show();
         }
-
     }
 }
