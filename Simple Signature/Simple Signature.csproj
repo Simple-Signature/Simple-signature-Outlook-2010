@@ -31,10 +31,10 @@
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\Users\mathieu.dutour\Documents\Visual Studio 2013\Projects\Simple Signature\publish\</PublishUrl>
+    <PublishUrl>C:\Users\mathieu.dutour\Documents\Visual Studio 2013\Projects\Simple Signature 2010\Simple-Signature-Outlook-2010\</PublishUrl>
     <InstallUrl />
     <TargetCulture>fr</TargetCulture>
-    <ApplicationVersion>0.5.0.11</ApplicationVersion>
+    <ApplicationVersion>0.5.0.16</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>false</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -138,6 +138,7 @@
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
@@ -210,6 +211,12 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RibbonMail.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RibbonMail.Designer.cs">
+      <DependentUpon>RibbonMail.cs</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
     <Compile Include="WelcomeForm.cs">
       <SubType>Form</SubType>
@@ -237,6 +244,9 @@
     </Compile>
     <EmbeddedResource Include="RibbonExplorer.resx">
       <DependentUpon>RibbonExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RibbonMail.resx">
+      <DependentUpon>RibbonMail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeForm.resx">
       <DependentUpon>WelcomeForm.cs</DependentUpon>

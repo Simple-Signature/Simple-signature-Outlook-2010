@@ -28,17 +28,17 @@ namespace Simple_Signature
             this.Application.ItemSend += new Microsoft.Office.Interop.Outlook.ApplicationEvents_11_ItemSendEventHandler(Application_ItemSend);
             inspectors = this.Application.Inspectors;
             inspectors.NewInspector += new Microsoft.Office.Interop.Outlook.InspectorsEvents_NewInspectorEventHandler(Inspectors_NewInspector);
-            Outlook.Application oOutlook = Globals.SimpleSign.Application;
-            oOutlook.OptionsPagesAdd += new Outlook.ApplicationEvents_11_OptionsPagesAddEventHandler(Application_OptionsPagesAdd);
+            Globals.SimpleSign.Application.OptionsPagesAdd += new Outlook.ApplicationEvents_11_OptionsPagesAddEventHandler(Application_OptionsPagesAdd);
             Globals.Ribbons.RibbonExplorer.parent = this;
+            Globals.Ribbons.RibbonMail.parent = this;
             if (Properties.Settings.Default.URLSimpleSign == "")
             {
                 Properties.Settings.Default.URLSimpleSign ="http://simplesignature.meteor.com/";
-                if (System.Configuration.ConfigurationSettings.AppSettings!=null && System.Configuration.ConfigurationSettings.AppSettings["firm"] != null || System.Configuration.ConfigurationSettings.AppSettings["firm"] != "")
+                if (System.Configuration.ConfigurationManager.AppSettings != null && System.Configuration.ConfigurationManager.AppSettings["firm"] != null || System.Configuration.ConfigurationManager.AppSettings["firm"] != "")
                 {
-                    Properties.Settings.Default.Firm = System.Configuration.ConfigurationSettings.AppSettings["firm"];
+                    Properties.Settings.Default.Firm = System.Configuration.ConfigurationManager.AppSettings["firm"];
                     Properties.Settings.Default.mailInterne = new System.Collections.Specialized.StringCollection();
-                    Properties.Settings.Default.mailInterne.AddRange(System.Configuration.ConfigurationSettings.AppSettings["mailInterne"].Split(';'));
+                    Properties.Settings.Default.mailInterne.AddRange(System.Configuration.ConfigurationManager.AppSettings["mailInterne"].Split(';'));
                 }
             }
             if (Properties.Settings.Default.FirstName == "")
@@ -98,6 +98,13 @@ namespace Simple_Signature
             }
         }
 
+        public void updateSignature(string name)
+        {
+            string body = mailItem.HTMLBody;
+            System.Text.RegularExpressions.Regex myRegex = new System.Text.RegularExpressions.Regex("(\\<div\\ id='signature'\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>)");
+            body = myRegex.Replace(body.Replace("\r\n", ""), "<div id='signature'>" + Signatures.getSignature(campaigns, this, name).Value + "</div>", 1);
+            mailItem.HTMLBody = body;
+        }
 
         public void updateCampaigns()
         {
@@ -110,13 +117,14 @@ namespace Simple_Signature
                 response = response.Replace("VARIABLE_MAIL", Properties.Settings.Default.Email);
                 campaigns = JsonConvert.DeserializeObject<Signatures[]>(response);
                 campaigns = campaigns.OrderBy(sign => sign.CreatedAt).ToArray();
+                Globals.Ribbons.RibbonMail.SignatureGallery.Items.Clear();
                 foreach (var signature in campaigns)
 	            {
                     Microsoft.Office.Tools.Ribbon.RibbonDropDownItem item = Globals.Factory.GetRibbonFactory().CreateRibbonDropDownItem();
                     item.Label = signature.Name;
                     item.Image = Base64ToImage(signature.Image);
                     item.ScreenTip = signature.Name;
-                    Globals.Ribbons.RibbonExplorer.SignatureGallery.Items.Add(item);
+                    Globals.Ribbons.RibbonMail.SignatureGallery.Items.Add(item);
 	            }
                 WebClient webClient = new WebClient();
                 foreach (var item in response.Split(new string[] { "<img alt=\\\"\\\" src=\\\"" }, StringSplitOptions.None))

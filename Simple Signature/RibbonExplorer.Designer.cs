@@ -39,18 +39,14 @@
             this.OptionGroup = this.Factory.CreateRibbonGroup();
             this.showOptions = this.Factory.CreateRibbonButton();
             this.showAdvancedOptions = this.Factory.CreateRibbonButton();
-            this.group1 = this.Factory.CreateRibbonGroup();
-            this.SignatureGallery = this.Factory.CreateRibbonGallery();
             this.SimpleSignTab.SuspendLayout();
             this.OptionGroup.SuspendLayout();
-            this.group1.SuspendLayout();
             // 
             // SimpleSignTab
             // 
             this.SimpleSignTab.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.SimpleSignTab.Groups.Add(this.OptionGroup);
-            this.SimpleSignTab.Groups.Add(this.group1);
-            this.SimpleSignTab.Label = "Simple Sign";
+            this.SimpleSignTab.Label = "Simple Signature";
             this.SimpleSignTab.Name = "SimpleSignTab";
             // 
             // OptionGroup
@@ -75,19 +71,6 @@
             this.showAdvancedOptions.Name = "showAdvancedOptions";
             this.showAdvancedOptions.ShowImage = true;
             // 
-            // group1
-            // 
-            this.group1.Items.Add(this.SignatureGallery);
-            this.group1.Name = "group1";
-            // 
-            // SignatureGallery
-            // 
-            this.SignatureGallery.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.SignatureGallery.Image = ((System.Drawing.Image)(resources.GetObject("SignatureGallery.Image")));
-            this.SignatureGallery.Label = "Signatures";
-            this.SignatureGallery.Name = "SignatureGallery";
-            this.SignatureGallery.ShowImage = true;
-            // 
             // RibbonExplorer
             // 
             this.Name = "RibbonExplorer";
@@ -98,8 +81,6 @@
             this.SimpleSignTab.PerformLayout();
             this.OptionGroup.ResumeLayout(false);
             this.OptionGroup.PerformLayout();
-            this.group1.ResumeLayout(false);
-            this.group1.PerformLayout();
 
         }
 
@@ -109,8 +90,6 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup OptionGroup;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton showOptions;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton showAdvancedOptions;
-        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
-        internal Microsoft.Office.Tools.Ribbon.RibbonGallery SignatureGallery;
     }
 
     partial class ThisRibbonCollection
